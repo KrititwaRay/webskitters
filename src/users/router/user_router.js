@@ -1,19 +1,6 @@
 import express from 'express';
 const router = express.Router();
-
-import multer from "multer";
-
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "./public/temp")
-    },
-    filename: function (req, file, cb) {
-        const uniqueName = Date.now() + '-' + file.originalname;
-        cb(null, uniqueName)
-    }
-})
-const upload = multer({ storage: storage });
+import { upload } from '../../helper/file_upload_middleware.js';
 
 import { UserController } from '../controller/user_controller.js';
 const userController = new UserController();

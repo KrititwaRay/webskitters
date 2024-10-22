@@ -44,7 +44,6 @@ export class UserMiddleware {
                 if (!req.body || !req.file) return true
                 let image_extension = ['jpg', 'jpeg', 'png', 'JPEG']
                 let fileExtension = req.file.filename.split('.')[1];
-                console.log(image_extension.includes(fileExtension))
                 if (image_extension.includes(fileExtension)) {
                     return true
                 } else {

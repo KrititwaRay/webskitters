@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 export class ConnectDatabase {
     constructor(){
         this.db_url = process.env.DATABASE_URL || 'mongodb://127.0.0.1:27017'

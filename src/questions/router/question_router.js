@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-
+import { upload } from '../../helper/file_upload_middleware.js';
 
 import { QuestionController } from '../controller/question_controller.js';
 const questionController = new QuestionController();
@@ -29,6 +29,14 @@ middleware = [
     commonMiddleware.authenticationMiddleware,
 ]
 router.route('/list').post(middleware, questionController.questionList)
+
+middleware = [
+    commonMiddleware.authenticationMiddleware,
+    upload.single('question'),
+    questionMiddleware.questionBulkInsertValidation(),
+    commonMiddleware.checkForErrors
+]
+router.route('/bulk-insert').post(middleware, questionController.questionBulkInsert)
 
 
 

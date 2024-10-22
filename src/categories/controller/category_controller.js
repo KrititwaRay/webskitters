@@ -1,6 +1,5 @@
 import { CategoryModel } from "../model/category_model.js";
 
-
 export class CategoryController {
     constructor() {
         this._categoryModel = new CategoryModel();

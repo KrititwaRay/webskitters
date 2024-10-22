@@ -35,13 +35,4 @@ export class CommonMiddleware {
         next();
     }
 
-    // isAuthorized = () => {
-    //     return (req, res, next) => {
-    //         if(req.user._id != req.body.id){
-                
-    //             return res.status(403).json({status: false, message: "You are not allowed to Edit this profile."})
-    //         }
-    //         next();
-    //     }
-    // }
 }

@@ -5,15 +5,12 @@ const app = express();
 dotenv.config();
 
 
-
 import { ConnectDatabase } from './config/db_config.js';
 const connectDatabase = new ConnectDatabase();
 connectDatabase.connectMongoDb()
 
 
 app.use(express.json({ limit: '150mb' }));
-
-
 
 
 import { app_router } from './app_routing.js';

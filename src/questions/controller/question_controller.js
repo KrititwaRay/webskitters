@@ -1,5 +1,6 @@
 import { QuestionModel } from "../model/question_model.js";
-import mongoose from "mongoose";
+import csv from 'csv-parser';
+import fs from 'fs';
 
 export class QuestionController {
     constructor(){
@@ -55,8 +56,45 @@ export class QuestionController {
             return res.status(200).json({
                 status: true,
                 data: { list: list },
-                message: "Questions retrieved successfully."
+                message: "Questions fetched successfully."
             });
+        } catch (error) {
+            return res.status(500).json({
+                status: false,
+                message: error.message
+            });
+        }
+    }
+
+
+    questionBulkInsert = async( req, res) => {
+        try {
+            let questionArray = [];
+            let filePath = req.file.path; 
+
+            fs.createReadStream(filePath)
+                .pipe(csv())
+                .on('data', (data) => {
+                    let { question, categoryId } = data;
+                  
+                    questionArray.push({
+                        question,
+                        categoryId: categoryId
+                    })
+
+                    console.log(questionArray)
+                  
+                })
+                .on('end', async () => {
+                        await this._questionModel.Question.insertMany(questionArray);
+                        fs.unlinkSync(filePath);
+
+                    return res.status(201).json({
+                        status: true,
+                        data: {},
+                        message: 'Questions added successfully'
+                    });
+                });
         } catch (error) {
             return res.status(500).json({
                 status: false,
