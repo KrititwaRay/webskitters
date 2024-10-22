@@ -41,6 +41,7 @@ export class UserModel {
         }
 
 
-        this.User = mongoose.model('User', schema)
+        this.User = mongoose.models.User || mongoose.model('User', schema) 
+       
     }
 }

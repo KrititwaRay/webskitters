@@ -1,6 +1,20 @@
 import express from 'express';
 const router = express.Router();
+// import { upload } from '../../helper/fileUpload_middleware.js';
 
+import multer from "multer";
+import path from 'path';
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "./public/temp")
+    },
+    filename: function (req, file, cb) {
+        const uniqueName = Date.now() + '-' + file.originalname;
+        cb(null, uniqueName)
+    }
+})
+const upload = multer({ storage: storage });
 
 import { UserController } from '../controller/user_controller.js';
 const userController = new UserController();
@@ -28,6 +42,22 @@ middleware = [
     commonMiddleware.checkForErrors
 ]
 router.route('/login').post(middleware, userController.logIn)
+
+middleware = [
+    commonMiddleware.authenticationMiddleware,
+    userMiddleware.viewUserProfileValidation(),
+    commonMiddleware.checkForErrors
+]
+router.route('/view-profile').post(middleware, userController.viewUserProfile)
+
+
+middleware = [
+    commonMiddleware.authenticationMiddleware,
+    upload.single('profilePicture'),
+    userMiddleware.editUserProfileValidation(),
+    commonMiddleware.checkForErrors
+]
+router.route('/edit-profile').post(middleware, userController.editUserProfile)
 
 
 

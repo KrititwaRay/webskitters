@@ -1,5 +1,6 @@
 import { UserModel } from "../model/user_model.js";
-import bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs';
+import mongoose from "mongoose";
 
 
 export class UserController {
@@ -89,6 +90,92 @@ export class UserController {
             return accessToken;
         } catch (error) {
             throw new Error("An error occurred while generating tokens.");
+        }
+    }
+
+
+    viewUserProfile = async(req, res) => {
+        try {
+           
+            let user = await this._userModel.User.aggregate([
+                {
+                    $match: { _id: new mongoose.Types.ObjectId(req.body.id) }
+                },
+                {
+                    $project: {
+                        password: 0,
+                        createdAt: 0,
+                        updatedAt: 0,
+                        __v: 0
+                    }
+                }
+            ]);
+       
+            return res.status(200).json({ status: true, data: {
+                id : user[0]._id,
+                username : user[0].username,
+                email : user[0].email,
+                profilePicture : user[0].profilePicture
+            },
+            message: "User profile fetched successfully."
+         })
+        } catch (error) {
+            return res.status(500).json({
+                status: false,
+                message: error.message
+            });
+        }
+    }
+
+
+    editUserProfile = async (req, res) => {
+        try {
+           
+            let uploadObj = {
+                useranme: req.body.useranme != '' ? req.body.useranme : req.user.useranme,
+                email: req.body.email != '' ? req.body.email : req.user.email,
+                profilePicture: req?.file != undefined ? req.file.filename : req.user.profilePicture
+
+            }
+            if(req.user._id != req.body.id){   
+                return res.status(403).json({status: false, message: "You are not allowed to Edit this profile."})
+            }
+           
+           let userExists = await this._userModel.User.aggregate([
+            { $match: { email: req.body.email } },
+            {
+                $project: { email: 1 }
+            }
+        ]);
+     
+        if (userExists && (req.user.email != userExists[0].email)) {
+            return res.status(409).json({
+                status: false,
+                data: {},
+                message: "Email already present. Please try another email."
+            })
+        }
+
+      
+        let updatedProfile = await this._userModel.User.updateOne({
+            _id: req.body.id
+        }, {
+            $set: uploadObj
+        })
+       
+        return res.status(500).json({
+            status: true,
+            data: {
+                _id: req.body.id
+            },
+            message: "Profile updated successfully."
+        });
+    
+        } catch (error) {
+            return res.status(500).json({
+                status: false,
+                message: error.message
+            });
         }
     }
 

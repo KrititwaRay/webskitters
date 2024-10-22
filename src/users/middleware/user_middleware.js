@@ -27,4 +27,31 @@ export class UserMiddleware {
             check('password').trim().not().isEmpty().withMessage('Pease provide password')
         ]
     }
+
+    viewUserProfileValidation() {
+        return [
+            check('id').trim().not().isEmpty().withMessage('Pleaase provide id.')
+        ]
+    }
+
+
+    editUserProfileValidation() {
+        return [
+            check('id').trim().not().isEmpty().withMessage('Pleaase provide id.'),
+            check('useranme').optional({ checkFalsy: true }).isString().withMessage('Please provide valid username'),
+            check('email').optional({ checkFalsy: true }).isEmail().withMessage('Please provide valid email'),
+            check('profilePicture').custom((val, { req }) => {
+                if (!req.body || !req.file) return true
+                let image_extension = ['jpg', 'jpeg', 'png', 'JPEG']
+                let fileExtension = req.file.filename.split('.')[1];
+                console.log(image_extension.includes(fileExtension))
+                if (image_extension.includes(fileExtension)) {
+                    return true
+                } else {
+                    throw new Error(`Please provide a valid file type. Allowed types are: ${image_extension.join(', ')}.`);
+                }
+
+            })
+        ]
+    }
 }
