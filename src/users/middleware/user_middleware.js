@@ -12,12 +12,19 @@ export class UserMiddleware {
 
             check('password').trim().not().isEmpty().withMessage('Pease provide password'),
 
-            check('confirm_password').custom((val,{req}) => {
-                if(!(val === req.body.password)){
+            check('confirm_password').custom((val, { req }) => {
+                if (!(val === req.body.password)) {
                     throw new Error('Passwords do not match.');
                 }
                 return true
             })
+        ]
+    }
+
+    loginValidation() {
+        return [
+            check('email').trim().not().isEmpty().withMessage('Pleaase provide email.').isEmail().withMessage('Please provide valid email.'),
+            check('password').trim().not().isEmpty().withMessage('Pease provide password')
         ]
     }
 }

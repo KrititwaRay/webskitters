@@ -21,7 +21,13 @@ middleware = [
     userMiddleware.signupValidation(),
     commonMiddleware.checkForErrors
 ]
-router.route('/sign-up').post(middleware, userController.signUp)
+router.route('/signup').post(middleware, userController.signUp)
+
+middleware = [
+    userMiddleware.loginValidation(),
+    commonMiddleware.checkForErrors
+]
+router.route('/login').post(middleware, userController.logIn)
 
 
 
