@@ -1,9 +1,8 @@
 import express from 'express';
 const router = express.Router();
-// import { upload } from '../../helper/fileUpload_middleware.js';
 
 import multer from "multer";
-import path from 'path';
+
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
